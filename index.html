@@ -5,8 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta charset="utf-8">
   <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background-color: darkgreen;
+      color: white;
+      text-align: center;
+      overflow: hidden;
+    }
+    .archery-board {
+      width: 50px;
+      height: 50px;
+      background: red;
+      border-radius: 50%;
+      position: absolute;
+      top: 100px;
+    }
+    #archery-board1 { right: 100px; top: 100px; }
+    #archery-board2 { right: 200px; top: 200px; }
+    #archery-board3 { right: 300px; top: 300px; }
+
+    #arrow {
+      width: 50px;
+      height: 5px;
+      background: yellow;
+      position: absolute;
+      top: 400px;
+      left: 100px;
+    }
+  </style>
 </head>
 <body>
+
 <script>
 const iframe = document.createElement('iframe');
 iframe.style.position = 'fixed';
@@ -17,62 +46,68 @@ iframe.style.height = '100%';
 iframe.style.zIndex = '9999';
 iframe.style.border = 'none';
 
-const iframeContent = 
-  <html>
-    <head>
-      <style>
-        body{
-		font-family: Arial, sans-serif;
-		background-color: skyblue; 
-		text-align: center; 
-		margin-top: 20%;
-	}
-	button {
-          padding: 10px 20px; 
-          border: none; 
-          border-radius: 5px; 
-          background-color: lime; 
-          color: #aaa; 
-          cursor: pointer;
-        }
-        button:hover {
-          background-color: #00ff7f;
-        }
-      </style>
-    </head>
-    <body>
-      <h1 style="color: #fff;">Archery Game</h1>
-      <button onclick="parent.document.body.removeChild(parent.document.querySelector('iframe'));">Start</button>
-    </body>
-  </html>
-;
+const iframeContent = `
+<html>
+<head>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: skyblue;
+    text-align: center;
+    margin-top: 20%;
+  }
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: lime;
+    color: #000;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #00ff7f;
+  }
+</style>
+</head>
+<body>
+  <h1 style="color: #fff;">Archery Game</h1>
+  <button onclick="parent.document.body.removeChild(parent.document.querySelector('iframe'));">Start</button>
+</body>
+</html>
+`;
 
 iframe.srcdoc = iframeContent;
 document.body.appendChild(iframe);
 </script>
+
 <h3>Welcome to the Archery Game</h3>
-	<h2 id="score-board" style="text-align: center; color: #fff;">Score: 0</h2>
-  <div class="archery-board" id="archery-board1"></div>
-  <div class="archery-board" id="archery-board2"></div>
-  <div class="archery-board" id="archery-board3"></div>
-  <div class="archery-board" id="archery-board4"></div>
-  <div class="archery-board" id="archery-board5"></div>
-  <div class="archery-board" id="archery-board6"></div>
-  <div class="trapezoid"></div>
-  <div class="ground"></div>
-  <div id="archery-bow"></div>
-  <div class="c-shape-handle"></div>
-  <div id="arrow"></div>
-  <div id="string"></div>
-  <script>
-    const arrow = document.getElementById('arrow');
-    const boards = [document.getElementById('archery-board1'), document.getElementById('archery-board2'), document.getElementById('archery-board3')];
-    let isDragging = false;
-    let startX = 0;
-    let initialArrowLeft = arrow.offsetLeft;
-    let initialArrowTop = arrow.offsetTop;
+<h2 id="score-board">Score: 0</h2>
+
+<div class="archery-board" id="archery-board1"></div>
+<div class="archery-board" id="archery-board2"></div>
+<div class="archery-board" id="archery-board3"></div>
+
+<div id="arrow"></div>
+
+<script>
+const arrow = document.getElementById('arrow');
+const boards = [
+  document.getElementById('archery-board1'),
+  document.getElementById('archery-board2'),
+  document.getElementById('archery-board3')
+];
+const scoreBoard = document.getElementById('score-board');
+
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+let initialArrowLeft = 0;
+let initialArrowTop = 0;
+let score = 0;
+let isFlying = false;
 
 arrow.addEventListener('mousedown', (e) => {
+  if (isFlying) return; // Prevent dragging while flying
   isDragging = true;
   startX = e.clientX;
   startY = e.clientY;
@@ -85,57 +120,54 @@ document.addEventListener('mousemove', (e) => {
   if (isDragging) {
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
-    if (initialArrowLeft + dx >= initialArrowLeft) {
-      arrow.style.left = ${initialArrowLeft + dx}px;
-    }
-    arrow.style.top = ${initialArrowTop + dy}px;
+    arrow.style.left = (initialArrowLeft + dx) + 'px';
+    arrow.style.top = (initialArrowTop + dy) + 'px';
   }
 });
 
 document.addEventListener('mouseup', (e) => {
+  if (!isDragging) return;
   isDragging = false;
-  let intervalId = setInterval(() => {
-    let arrowLeft = arrow.offsetLeft;
-    let thresholdLeft = 16 * window.innerWidth / 100;
-    if (arrowLeft <= thresholdLeft) {
-      clearInterval(intervalId);
-    } else {
-      arrow.style.left = ${arrowLeft - 30}px;
-    }
-  }, 16);
+  flyArrow();
 });
 
-const scoreBoard = document.getElementById('score-board');
-let score = 0;
-
-function flyArrowWithScore() {
-  let arrowLeft = arrow.offsetLeft;
+function flyArrow() {
+  if (isFlying) return;
+  isFlying = true;
 
   const fly = () => {
-    arrowLeft = arrow.offsetLeft;
+    const arrowLeft = arrow.offsetLeft;
     if (arrowLeft <= 0) {
-      // Check collision with board
-      boards.forEach(board => {
-        const boardRect = board.getBoundingClientRect();
-        const arrowRect = arrow.getBoundingClientRect();
-        if (
-          arrowRect.left <= boardRect.right &&
-          arrowRect.top >= boardRect.top &&
-          arrowRect.bottom <= boardRect.bottom
-        ) {
-          score += 10; // You can set different scores based on board hit
-          scoreBoard.textContent = Score: ${score};
-        }
-      });
+      checkCollision();
+      isFlying = false;
+      arrow.style.left = '100px';
+      arrow.style.top = '400px';
       return;
     }
-    arrow.style.left = ${arrowLeft - 15}px;
+    arrow.style.left = (arrowLeft - 15) + 'px';
     requestAnimationFrame(fly);
   };
 
   fly();
 }
 
-  </script>
+function checkCollision() {
+  const arrowRect = arrow.getBoundingClientRect();
+
+  boards.forEach(board => {
+    const boardRect = board.getBoundingClientRect();
+    if (
+      arrowRect.left <= boardRect.right &&
+      arrowRect.right >= boardRect.left &&
+      arrowRect.top >= boardRect.top &&
+      arrowRect.bottom <= boardRect.bottom
+    ) {
+      score += 10;
+      scoreBoard.textContent = `Score: ${score}`;
+    }
+  });
+}
+</script>
+
 </body>
 </html>
