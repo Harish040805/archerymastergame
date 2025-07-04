@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Archery Master Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<script>
+const iframe = document.createElement('iframe');
+iframe.style.position = 'fixed';
+iframe.style.top = '0';
+iframe.style.left = '0';
+iframe.style.width = '100%';
+iframe.style.height = '100%';
+iframe.style.zIndex = '9999';
+iframe.style.border = 'none';
+
+const iframeContent = 
+  <html>
+    <head>
+      <style>
+        body{
+		font-family: Arial, sans-serif;
+		background-color: skyblue; 
+		text-align: center; 
+		margin-top: 20%;
+	}
+	button {
+          padding: 10px 20px; 
+          border: none; 
+          border-radius: 5px; 
+          background-color: lime; 
+          color: #aaa; 
+          cursor: pointer;
+        }
+        button:hover {
+          background-color: #00ff7f;
+        }
+      </style>
+    </head>
+    <body>
+      <h1 style="color: #fff;">Archery Game</h1>
+      <button onclick="parent.document.body.removeChild(parent.document.querySelector('iframe'));">Start</button>
+    </body>
+  </html>
+;
+
+iframe.srcdoc = iframeContent;
+document.body.appendChild(iframe);
+</script>
+<h3>Welcome to the Archery Game</h3>
+	<h2 id="score-board" style="text-align: center; color: #fff;">Score: 0</h2>
+  <div class="archery-board" id="archery-board1"></div>
+  <div class="archery-board" id="archery-board2"></div>
+  <div class="archery-board" id="archery-board3"></div>
+  <div class="archery-board" id="archery-board4"></div>
+  <div class="archery-board" id="archery-board5"></div>
+  <div class="archery-board" id="archery-board6"></div>
+  <div class="trapezoid"></div>
+  <div class="ground"></div>
+  <div id="archery-bow"></div>
+  <div class="c-shape-handle"></div>
+  <div id="arrow"></div>
+  <div id="string"></div>
+  <script>
+    const arrow = document.getElementById('arrow');
+    const boards = [document.getElementById('archery-board1'), document.getElementById('archery-board2'), document.getElementById('archery-board3')];
+    let isDragging = false;
+    let startX = 0;
+    let initialArrowLeft = arrow.offsetLeft;
+    let initialArrowTop = arrow.offsetTop;
+
+arrow.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  startX = e.clientX;
+  startY = e.clientY;
+  initialArrowLeft = arrow.offsetLeft;
+  initialArrowTop = arrow.offsetTop;
+  e.preventDefault();
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (isDragging) {
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (initialArrowLeft + dx >= initialArrowLeft) {
+      arrow.style.left = ${initialArrowLeft + dx}px;
+    }
+    arrow.style.top = ${initialArrowTop + dy}px;
+  }
+});
+
+document.addEventListener('mouseup', (e) => {
+  isDragging = false;
+  let intervalId = setInterval(() => {
+    let arrowLeft = arrow.offsetLeft;
+    let thresholdLeft = 16 * window.innerWidth / 100;
+    if (arrowLeft <= thresholdLeft) {
+      clearInterval(intervalId);
+    } else {
+      arrow.style.left = ${arrowLeft - 30}px;
+    }
+  }, 16);
+});
+
+const scoreBoard = document.getElementById('score-board');
+let score = 0;
+
+function flyArrowWithScore() {
+  let arrowLeft = arrow.offsetLeft;
+
+  const fly = () => {
+    arrowLeft = arrow.offsetLeft;
+    if (arrowLeft <= 0) {
+      // Check collision with board
+      boards.forEach(board => {
+        const boardRect = board.getBoundingClientRect();
+        const arrowRect = arrow.getBoundingClientRect();
+        if (
+          arrowRect.left <= boardRect.right &&
+          arrowRect.top >= boardRect.top &&
+          arrowRect.bottom <= boardRect.bottom
+        ) {
+          score += 10; // You can set different scores based on board hit
+          scoreBoard.textContent = Score: ${score};
+        }
+      });
+      return;
+    }
+    arrow.style.left = ${arrowLeft - 15}px;
+    requestAnimationFrame(fly);
+  };
+
+  fly();
+}
+
+  </script>
+</body>
+</html>
