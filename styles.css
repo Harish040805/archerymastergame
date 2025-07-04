@@ -1,13 +1,13 @@
-body{
-	background: #C7E5F7;
-}
-.archery-board {
-	position: absolute;
-	top: 50%;
-	transform: translate(0, -50%);
-	border: 1px solid black;
-	border-radius: 50%;
-}
+	body{
+		background: #C7E5F7;
+	}
+    .archery-board {
+		position: absolute;
+		top: 50%;
+	    transform: translate(0, -50%);
+		border: 1px solid black;
+		border-radius: 50%;
+	}
 .c-shape-handle {
   position: absolute;
   top: 50%;
@@ -20,43 +20,43 @@ body{
   border-right: none;
   background-color: transparent;
 }
-#archery-board1 {
+	#archery-board1 {
       left: 2%;
       width: 270px;
       height: 400px;
       background-color: #fff;
     }
-#archery-board2 {
+	#archery-board2 {
       left: 4%;
       width: 220px;
       height: 350px;
       background-color: #777;
     }
-#archery-board3 {
+	#archery-board3 {
       left: 6%;
       width: 170px;
       height: 300px;
       background-color: #0099CC;
     }
-#archery-board4 {
+	#archery-board4 {
       left: 9.5%;
       width: 100px;
       height: 200px;
       background-color: #FF6666;
     }
-#archery-board5 {
+	#archery-board5 {
       left: 12%;
       width: 30px;
       height: 100px;
       background-color: #FFD700;
     }
-#archery-board6 {
+	#archery-board6 {
       left: 13%;
       width: 5px;
       height: 5px;
       background-color: #aaa;
     }
-#archery-bow {
+    #archery-bow {
       position: absolute;
       top: 50%;
       left: 80%;
@@ -64,29 +64,39 @@ body{
       width: 100px;
       height: 50px;
       background-color: #946e4a;
-      border: 2px solid #7d5839;
+	  border: 2px solid #7d5839;
       border-radius: 10px;
     }
-#arrow {
-  position: absolute;
-  top: 50%;
-  left: 75%;
-  width: 300px;
-  height: 300px;
-  background-color: gray;
-  clip-path: polygon(20% 35%, 20% 45%, 100% 45%, 100% 55%, 20% 55%, 20% 65%, 0% 50%);
-  cursor: grab;
-  transform: translate(0, -50%); /* DO NOT rotate */
-}
-#string {
-  position: absolute;
-  top: 37.25%;
-  left: 89%;
-  width: 2px;
-  height: 185px;
-  background-color: #fff;
-}
-.trapezoid {
+    #arrow {
+      position: absolute;
+      top: 50%;
+      left: 75%;
+      transform: translate(0, -50%) rotate(-90deg);
+      width: 10px;
+      height: 50px;
+      background-color: gray;
+      clip-path: polygon(50% 0%, 100% 100%, 50% 80%, 0% 100%);
+      cursor: grab;
+    }
+	#string {
+	  position: absolute;
+      top: 37.25%;
+      left: 89%;
+	  width: 2px;
+	  height: 185px;
+	  background-color: #fff;
+	}
+	#stick {
+      position: absolute;
+      top: 50%;
+      left: 86.5%;
+      transform: translate(0, -50%) rotate(-90deg);
+      width: 2px;
+      height: 300px;
+      background-color: brown;
+      cursor: grab;
+    }
+	.trapezoid {
 	border-bottom: 50px solid #cd9b1d;
 	border-left: 30px solid transparent;
 	border-right: 25px solid transparent;
@@ -95,14 +105,14 @@ body{
 	position: absolute;
 	top: 1%;
 }
-.ground {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 99.8%;
-  height: 112px;
-  background-color: lime;
-  border: 2px solid green;
+	.ground {
+	  position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 99.8%;
+      height: 112px;
+      background-color: lime;
+	  border: 2px solid green;
 }
 h3 {
 	font-family: Arial, sans-serif; 
